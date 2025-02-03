@@ -6,40 +6,26 @@ from nerimity.member import Member, ServerMember, ClientMember
 from nerimity.server import Server
 from nerimity.roles import Role
 from nerimity.post import Post
-
+from functools import wraps
 import websockets
 import asyncio
 import json
 import requests
 import time
 import re
+import functools
+from typing import Callable, List
+import traceback
 
 def camel_to_snake(camel_case):
     snake_case = re.sub(r'([a-z0-9])([A-Z])', r'\1_\2', camel_case)
     return snake_case.lower()
 
 class Client:
-    """
-    Represents the client of the bot in Nerimity. DO NOT MODIFY THIS!
-
-    token: The Token of the bot.
-    prefix: The command prefix of the bot.
-    commands: A dictionary of commands and the functions to execute said command.
-    event_listeners: A dictionary of listeners events that get executed when the listener fires.
-    account: A ClientMember that represents the bot account.
-    servers: A dictionary of servers that the bot is in.
-    pending_friends: A dict of pending friends.
-
-    run(): Starts the bot. Any code below the start will not be executed until the bot crashes.
-
-    @command(): decorator | Used to register a prefixed command.
-    @listen(): decorator | Used to register to an event listener.
-    """
-
     def __init__(self, token: str, prefix: str) -> None:
-        self.token    : str            = token
-        self.prefix   : str            = prefix
-        self.commands : list[function] = {}
+        self.token: str = token
+        self.prefix: str = prefix
+        self.commands: dict[str, Callable] = {}
         self.event_listeners = {
             "on_ready": [],
             "on_message_updated": [],
@@ -66,29 +52,49 @@ class Client:
             "on_minute_pulse": [],
             "on_hour_pulse": [],
         }
-        self.account: ClientMember              = ClientMember()
-        self.servers: dict[str, Server]         = {}
+        self.account: ClientMember = ClientMember()
+        self.servers: dict[str, Server] = {}
         self.pending_friends: dict[str, Member] = {}
 
         GlobalClientInformation.TOKEN = token
 
-    # Public: Decorator to register a prefixed command.
-    def command(self, name: str = None, aliases: list[str] = None) -> None:
+    def command(self, name: str = None, aliases: list[str] = None):
         """Decorator to register a prefixed command."""
 
-        def decorator(func):
+        def decorator(func: Callable):
             command_name = name if name is not None else func.__name__
-            self.commands[command_name] = func
 
+            @functools.wraps(func)
+            async def async_wrapper(ctx, *args, **kwargs):
+                if not isinstance(ctx, Context):
+                    raise TypeError(f"Error: Expected nerimity.Context, got {type(ctx)}")
+
+                # Call function
+                result = func(ctx, *args, **kwargs)
+
+                # Ensure we only await if result is a coroutine
+                if asyncio.iscoroutine(result):
+                    awaited_result = await result
+                    return awaited_result if awaited_result is not None else None  # Prevent returning NoneType for awaiting
+                elif result is None:
+                    # Handle None result explicitly
+                    return None
+                return result
+
+            wrapped_func = async_wrapper if asyncio.iscoroutinefunction(func) else func
+            self.commands[command_name] = wrapped_func
 
             if aliases is not None:
                 if not isinstance(aliases, list):
                     raise TypeError("Aliases should be a list of strings.")
                 for alias in aliases:
-                    self.commands[alias] = func
+                    self.commands[alias] = wrapped_func
 
-            return func
+            return wrapped_func
+
         return decorator
+
+
 
     # Public: Decorator to register to an event listener.
     def listen(self, event: str) -> None:
@@ -429,6 +435,8 @@ class Client:
                     asyncio.get_event_loop().run_until_complete(main())
                 except Exception as e:
                     print(f"{ConsoleShortcuts.error()} Bot crashed with error: {e}")
+                    traceback.print_exc()
+                    
                 
                 if time.time() - last_crash < 60:
                     print(f"{ConsoleShortcuts.error()} Last crash happened less than a minute ago. Shutting down.")

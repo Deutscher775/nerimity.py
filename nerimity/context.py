@@ -14,12 +14,12 @@ class Context():
     channel: The channel where the command was triggered in.
     server: The server where the command was tirggered in
 
-    respond(): Responds to the original message.
+    send(): Sends a message to the channel the command was sent to.
     remove(): Removes the original message.
     react(): Adds an emoji the original message.
     """
 
-    def __init__(self, message: Message) -> None:
+    def __init__(self, message: Message):
         self.message: Message       = message
         self.author : ServerMember  = None
         self.channel: Channel       = message.channel
@@ -31,11 +31,11 @@ class Context():
                 self.channel = GlobalClientInformation.SERVERS[f"{server.id}"].channels[f"{message.channel_id}"]
                 self.author  = GlobalClientInformation.SERVERS[f"{server.id}"].members[f"{message.author_id}"]
 
-    # Public: Responds to the original message.
-    def respond(self, response: str, attachments: list[Attachment] | None = None) -> None:
-        """Responds to the original message."""
+    # Public: Sends a message to the channel the command was sent to.
+    def send(self, response: str, attachment: Attachment | None = None) -> None:
+        """Sends a message to the channel the command was sent to."""
 
-        self.channel.send_message(response, attachments)
+        self.channel.send_message(response, attachment)
 
     # Public: Removes the original message.
     def remove(self) -> None:
