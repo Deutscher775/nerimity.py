@@ -44,8 +44,6 @@ class Attachment():
     async def upload(self):
         """|coro| Uploads the attachment to the CDN. Returns the file ID. This is not a usable file yet. It will be automatically uploaded with the send_message method."""
         formdata = aiohttp.FormData()
-        print(self.data_type)
-        print(self.name)
         formdata.add_field("f", self.data, filename=self.name, content_type=self.data_type)
         headers = {
             "Authorization": GlobalClientInformation.TOKEN,
