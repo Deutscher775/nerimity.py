@@ -76,7 +76,7 @@ class Channel():
                     raise requests.RequestException
 
     # Public: Sends a message to the channel.
-    def send_message(self, message_content: str, attachment: Attachment | None = None) -> None:
+    def send_message(self, message_content: str, attachment: Attachment | None = None) -> Message:
         """Sends a message to the channel."""
 
         api_endpoint = f"https://nerimity.com/api/channels/{self.id}/messages"
@@ -84,6 +84,7 @@ class Channel():
         headers = {
             "Authorization": GlobalClientInformation.TOKEN,
         }
+
         data = {
             "content": message_content,
         }

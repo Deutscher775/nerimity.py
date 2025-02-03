@@ -12,11 +12,11 @@ class Context():
     message: The message that triggered the command.
     author: The author of the message that triggered the command.
     channel: The channel where the command was triggered in.
-    server: The server where the command was tirggered in
+    server: The server where the command was triggered in.
 
     send(): Sends a message to the channel the command was sent to.
     remove(): Removes the original message.
-    react(): Adds an emoji the original message.
+    react(): Adds an emoji to the original message.
     """
 
     def __init__(self, message: Message):
@@ -32,19 +32,16 @@ class Context():
                 self.author  = GlobalClientInformation.SERVERS[f"{server.id}"].members[f"{message.author_id}"]
 
     # Public: Sends a message to the channel the command was sent to.
-    def send(self, response: str, attachment: Attachment | None = None) -> None:
+    async def send(self, response: str, attachment: Attachment | None = None) -> Message:
         """Sends a message to the channel the command was sent to."""
-
-        self.channel.send_message(response, attachment)
+        return await self.channel.send_message(response, attachment)
 
     # Public: Removes the original message.
-    def remove(self) -> None:
+    async def remove(self) -> None:
         """Removes the original message."""
-
-        self.message.delete()
+        await self.message.delete()
     
-    # Public: Adds an emoji the original message.
-    def react(self, emoji: str) -> None:
-        """Adds an emoji the original message."""
-
-        self.message.react(emoji)
+    # Public: Adds an emoji to the original message.
+    async def react(self, emoji: str) -> None:
+        """Adds an emoji to the original message."""
+        await self.message.react(emoji)
