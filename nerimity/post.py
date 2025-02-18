@@ -7,6 +7,7 @@ class Post():
     """
     Represents a post in Nerimity.
 
+    create_post(): static | Creates a new Post and publishes it.
     delete_post(): Deletes this post. Requires ownership over the post.
     get_comments(): Gets the comment as a list of Posts.
     like(): Likes the post.
@@ -29,11 +30,53 @@ class Post():
         self.creator        : Member        = Member()
         self.liked_by       : list[int]     = []
         self.attachments    : list          = []
+    
+
+    # static | Gets a post by its ID.
+    @staticmethod
+    def get_post(post_id: int) -> 'Post':
+        """Gets a post by its ID."""
+
+        api_endpoint = f"https://nerimity.com/api/posts/{post_id}"
+
+        headers = {
+            "Authorization": GlobalClientInformation.TOKEN,
+            "Content-Type": "application/json",
+        }
+
+        response = requests.get(api_endpoint, headers=headers)
+        if response.status_code != 200:
+            print(f"{ConsoleShortcuts.error()} Failed to get post by ID. Status code: {response.status_code}. Response Text: {response.text}")
+            raise requests.RequestException
+
+        return Post.deserialize(response.json())
+    
+
+    # static | Creates a new Post and publishes it.
+    @staticmethod
+    def create_post(content: str) -> 'Post':
+        """Creates a new Post and publishes it."""
+
+        api_endpoint = f"https://nerimity.com/api/posts"
+
+        headers = {
+            "Authorization": GlobalClientInformation.TOKEN,
+            "Content-Type": "application/json",
+        }
+        data = {
+            "content": content
+        }
+        response = requests.post(api_endpoint, headers=headers, data=json.dumps(data))
+        if response.status_code != 200:
+            print(f"{ConsoleShortcuts.error()} Failed to create a post. Status code: {response.status_code}. Response Text: {response.text}")
+            raise requests.RequestException
+
+        return Post.deserialize(response.json())
+
 
     # Public: Deletes this post. Requires ownership over the post.
     def delete_post(self) -> None:
-        """Deletes this post. Requires ownership over the post. NOT CURRENTLY POSSIBLE."""
-        return
+        """Deletes this post. Requires ownership over the post. DOES NOT WORK YET."""
 
         api_endpoint = f"https://nerimity.com/api/posts/{self.id}"
 
@@ -48,11 +91,10 @@ class Post():
             raise requests.RequestException
 
     # Public: Gets the comment as a list of Posts.
-    def get_comments(self) -> list['Post']:
-        """Gets the comment as a list of Post. NOT CURRENTLY POSSIBLE."""
-        return
+    def get_comments(self, limit: int = 30) -> list['Post']:
+        """Gets the comment as a list of Post. DOES NOT WORK YET."""
 
-        api_endpoint = f"https://nerimity.com/api/posts/{self.id}/comments"
+        api_endpoint = f"https://nerimity.com/api/posts/{self.id}/comments?limit={limit}"
 
         headers = {
             "Authorization": GlobalClientInformation.TOKEN,
@@ -66,8 +108,7 @@ class Post():
     
     # Public: Likes the post.
     def like(self) -> None:
-        """Likes the post. NOT CURRENTLY POSSIBLE."""
-        return
+        """Likes the post. DOES NOT WORK YET."""
 
         api_endpoint = f"https://nerimity.com/api/posts/{self.id}/like"
         self.liked_by.append({"id": self.id})
@@ -85,8 +126,7 @@ class Post():
     
     # Public: Unlikes the post.
     def unlike(self) -> None:
-        """Unlikes the post. NOT CURRENTLY POSSIBLE."""
-        return
+        """Unlikes the post. DOES NOT WORK YET."""
 
         api_endpoint = f"https://nerimity.com/api/posts/{self.id}/unlike"
         self.liked_by.remove({"id": self.id})
@@ -104,8 +144,7 @@ class Post():
 
     # Public: Creates a comment to the post.
     def create_comment(self, message_content: str) -> None:
-        """Creates a post and publishes it. NOT CURRENTLY POSSIBLE."""
-        return
+        """Creates commant under a post and publishes it. DOES NOT WORK YET."""
 
         api_endpoint = f"https://nerimity.com/api/posts"
 
