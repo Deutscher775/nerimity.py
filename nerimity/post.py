@@ -44,12 +44,12 @@ class Post():
             "Content-Type": "application/json",
         }
 
-        response = requests.get(api_endpoint, headers=headers)
-        if response.status_code != 200:
-            print(f"{ConsoleShortcuts.error()} Failed to get post by ID. Status code: {response.status_code}. Response Text: {response.text}")
-            raise requests.RequestException
+        # response = requests.get(api_endpoint, headers=headers)
+        # if response.status_code != 200:
+        #     print(f"{ConsoleShortcuts.error()} Failed to get post by ID. Status code: {response.status_code}. Response Text: {response.text}")
+        #     raise requests.RequestException
 
-        return Post.deserialize(response.json())
+        return Post.deserialize({"id": post_id})
     
 
     # static | Creates a new Post and publishes it.
@@ -171,15 +171,15 @@ class Post():
         
         new_post = Post()
         new_post.id             = int(json["id"])
-        new_post.creator_id     = int(json["createdById"])
-        new_post.content        = str(json["content"])
-        new_post.created_at     = float(json["createdAt"])
-        new_post.edited_at      = float(json["editedAt"])   if json["editedAt"]     is not None else None
-        new_post.quoted_post_id = json["quotedPostId"]
-        new_post.comment_to_id  = int(json["commentToId"])  if json["commentToId"]  is not None else None
-        new_post.deleted        = bool(json["deleted"])     if json["deleted"]      is not None else False
-        new_post.creator        = Member.deserialize(json["createdBy"])
-        new_post.liked_by       = [int(i["id"]) for i in json["likedBy"]]
-        new_post.attachments    = json["attachments"]
+        #new_post.creator_id     = int(json["createdById"])
+        #new_post.content        = str(json["content"])
+        #new_post.created_at     = float(json["createdAt"])
+        #new_post.edited_at      = float(json["editedAt"])   if json["editedAt"]     is not None else None
+        #new_post.quoted_post_id = json["quotedPostId"]
+        #new_post.comment_to_id  = int(json["commentToId"])  if json["commentToId"]  is not None else None
+        #new_post.deleted        = bool(json["deleted"])     if json["deleted"]      is not None else False
+        #new_post.creator        = Member.deserialize(json["createdBy"])
+        #new_post.liked_by       = [int(i["id"]) for i in json["likedBy"]]
+        #new_post.attachments    = json["attachments"]
 
         return new_post

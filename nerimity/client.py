@@ -6,6 +6,7 @@ from nerimity.member import Member, ServerMember, ClientMember
 from nerimity.server import Server
 from nerimity.roles import Role
 from nerimity.post import Post
+from nerimity.status import Status
 from functools import wraps
 import websockets
 import asyncio
@@ -57,6 +58,9 @@ class Client:
         self.pending_friends: dict[str, Member] = {}
 
         GlobalClientInformation.TOKEN = token
+    
+    def change_presence(self, status: Status.StatusType.type = None, text: str = None) -> None:
+        Status.change_presence(status=status, text=text)
 
     def command(self, name: str = None, aliases: list[str] = None):
         """Decorator to register a prefixed command."""
@@ -97,7 +101,7 @@ class Client:
 
 
     # Public: Decorator to register to an event listener.
-    def listen(self, event: str) -> None:
+    def listen(self, event: str):
         """
         Decorator to register to an event listener. Unless noted otherwise a 'dict' with relevent is passed.
 
@@ -183,7 +187,7 @@ class Client:
 
     # Private: Listens to the webhook and calls commands/listeners.
     async def _listen_webhook(self, websocket: 'websockets.legacy.client.WebSocketClientProtocol') -> None:
-        print(f"{ConsoleShortcuts.log()} The bot is now listening to incoming connections.")
+        print(f"{ConsoleShortcuts.ok()} The bot is now listening to incoming connections.")
         while True:
             message_raw: str = await websocket.recv()
 
@@ -348,6 +352,11 @@ class Client:
                     pass
             elif message_raw.startswith("42[\"notification:dismissed"):
                     pass
+            elif message_raw.startswith("42[\"user:auth_queue_position"):
+
+                message = json.loads(message_raw.removeprefix("42"))[1]
+                print(f"{ConsoleShortcuts.warn()} Authentication queue position: {message['pos']}")
+                 
             elif message_raw.startswith("0{\"sid"):
                 await websocket.send("40")
 
@@ -385,10 +394,17 @@ class Client:
                             await websocket.send(f"42[\"user:authenticate\",{{\"token\":\"{GlobalClientInformation.TOKEN}\"}}]")
 
                             message: str = await websocket.recv()
-                            print(f"{ConsoleShortcuts.log()} Authentication process finished successfully!")
+                            print(f"{ConsoleShortcuts.ok()} Authentication process finished successfully!")
 
                             # Load everything they send over to the servers dict
                             message_auth = json.loads(message.removeprefix("42"))[1]
+                            if message_auth.get("pos") != 0:
+                                print(f"{ConsoleShortcuts.warn()} Authentication queue position: {message_auth.get('pos')}")
+                            while message_auth.get("pos") and message_auth.get("pos") != 0:
+                                message = await websocket.recv()
+                                if message.startswith("42[\"user:auth_queue_position"):
+                                    message_auth = json.loads(message.removeprefix("42"))[1]
+                                    print(f"{ConsoleShortcuts.warn()} Authentication queue position: {message_auth.get('pos')}")
                             self.account = ClientMember.deserialize(message_auth["user"])
 
                             for server_raw in message_auth["servers"]:

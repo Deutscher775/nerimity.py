@@ -33,7 +33,53 @@ async def ping(ctx: nerimity.Context, params: str):
 async def on_ready():
     print(f"Logged in as {client.account.username}")
 
+
 client.run()
+```
+
+## Use case examples
+### Sending an attachment
+```py
+@client.command(name="testattachment")
+async def testattachment(ctx: nerimity.Context, params):
+    file = await nerimity.Attachment.construct("test.png").upload()
+    result = await ctx.send("Test", attachment=file)
+```
+
+### Creating a post
+```py
+@client.command(name="createpost")
+async def createpost(ctx: nerimity.Context, params):
+    content = ""
+    for param in params:
+        content += param + " "
+    await ctx.send("Creating post with text: " + content)
+    post = nerimity.Post.create_post(content)
+    print(post)
+    await ctx.send("Post created.")
+```
+
+### Commenting on a post
+```py
+@client.command(name="comment")
+async def comment(ctx: nerimity.Context, params):
+    post_id = int(params[0])
+    content = ""
+    for param in params[1:]:
+        content += param + " "
+    post = nerimity.Post.get_post(post_id)
+    post.create_comment(content)
+    await ctx.send("Commented on post.")
+```
+
+### Deleting a post
+```py
+@client.command(name="deletepost")
+async def deletepost(ctx: nerimity.Context, params):
+    post_id = int(params[0])
+    post = nerimity.Post.get_post(post_id)
+    post.delete_post()
+    await ctx.send("Deleted post.")
 ```
 
 ## Issues

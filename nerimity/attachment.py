@@ -6,7 +6,8 @@ class Attachment():
     """
     Represents an attachment in Nerimity.
 
-    construct(): static | Creates a new Attachment object from a file path.
+    construct(file_path): static | Creates a new Attachment object from a file path.
+    upload(): |coro| Uploads the attachment to the CDN.
     deserialize(): static | Deserialize a json string to a Attachment object.
     """
 
