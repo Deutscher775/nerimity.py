@@ -11,5 +11,6 @@ from nerimity.invite import Invite
 from nerimity.post import Post
 from nerimity.status import Status
 from nerimity.button import Button
+from nerimity.buttoninteraction import ButtonInteraction
 
 pass

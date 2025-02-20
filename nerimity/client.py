@@ -64,6 +64,26 @@ class Client:
     
     def change_presence(self, status: Status.StatusType.type = None, text: str = None) -> None:
         Status.change_presence(status=status, text=text)
+    
+    def get_user(self, user_id: str, cache_fallback: bool = True) -> Member:
+        """Get a user by their ID.
+        ## Parameters
+        - user_id: The ID of the user to get.
+        - cache_fallback: Whether to fallback to the cache if the user cannot be be fetched from the API."""
+
+        api_url = f"https://nerimity.com/api/users/{user_id}"
+
+        response = requests.get(api_url, headers={"Authorization": self.token})
+        if response.status_code == 200:
+            return Member.deserialize(response.json())
+        elif cache_fallback:
+            for server in GlobalClientInformation.SERVERS.values():
+                if str(user_id) in server.members.keys():
+                    return server.members[str(user_id)]
+            else:
+                print(f"{ConsoleShortcuts.error()} Error getting a user: {response.status_code} - {response.text}")
+        else:
+            print(f"{ConsoleShortcuts.error()} Error getting a user (cache fallback disabled): {response.status_code} - {response.text}")
 
     def command(self, name: str = None, aliases: list[str] = None):
         """Decorator to register a prefixed command."""
@@ -218,31 +238,22 @@ class Client:
                  
                 message = json.loads(message_raw.removeprefix("42"))[1]
                 client_buttons = GlobalClientInformation.BUTTONS
-                _button = None
+
                 for button in client_buttons:
                     if button.id == message["buttonId"]:
-                        _button = button
-                        await button.callback()
+                        print(button)
+                        button_interaction = ButtonInteraction.deserialize(
+                                {
+                                    "messageId": message["messageId"],
+                                    "channelId": message["channelId"],
+                                    "button": button,
+                                    "userId": message["userId"]
+                                }
+                    	    )
+                        await button.callback(button_interaction)
                         break
-                button_interaction = ButtonInteraction.deserialize(
-                    {
-                        "messageId": message["messageId"],
-                        "channelId": message["channelId"],
-                        "button": message["button"],
-                        "userId": message["userId"]
-                    }
-                )
-                 # Find the button by ID and execute its callback
-                button_id = message["buttonId"]
-                for server in self.servers.values():
-                    for channel in server.channels.values():
-                        for message in channel.messages:
-                            for button in message.buttons:
-                                if button.id == button_id:
-                                    await button.callback()
-                                    break
-
-                return await self.event_listeners["on_button_clicked"][0].__call__(button_interaction)
+                else:
+                    print(f"{ConsoleShortcuts.warn()} Button with ID {message['buttonId']} not found. Ignoring.")
 
             elif message_raw.startswith("42[\"message:reaction_added"):
                     

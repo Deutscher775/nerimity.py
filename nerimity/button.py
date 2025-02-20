@@ -6,16 +6,25 @@ class Button():
     id: string | The ID of the button.
     alert: bool | Whether the button is an alert button. (Button will be red if true)
     """
-    def __init__(self, label: str, id: str, alert: bool=False):
-        self.label = label
-        self.id = id
-        self.alert = alert
-        self._callback = None
+    def __init__(self) -> None:
+        self.label      : str           = None
+        self.id         : str           = None
+        self.alert      : bool          = False
+        self._callback                  = None
     
-    async def callback(self):
+    @classmethod
+    def construct(cls, label: str, id: str, alert: bool = False) -> 'Button':
+        """Constructs a button."""
+        button = cls()
+        button.label = label
+        button.id = id
+        button.alert = alert
+        return button
+    
+    async def callback(self, buttoninteraction):
         """Callback function for the button."""
         if self._callback:
-            await self._callback()
+            await self._callback(buttoninteraction)
     
     async def set_callback(self, callback_func):
         """Sets the callback function for the button."""
