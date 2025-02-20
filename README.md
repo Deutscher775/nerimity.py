@@ -2,6 +2,17 @@
 
 Python API wrapper for Nerimity originating from [Fiiral](https://github.com/F-iiral), maintained by [Deutscher775](https://github.com/Deutscher775)
 
+# Quick jumps
+- **[Current Features](#current-features)** <br>
+See the features that the framework currently supports.
+- **[Installation](#installation)** <br>
+Guide on how to install nerimity.py.
+- **[Example Bot](#example-commands-bot)** <br>
+An example bot you can directly use.
+- **[Use-case-examples](#use-case-examples)** <br>
+Many varous examples on how to use specific functions.
+
+
 # Current features
 #### Command Handling:
 - Define and register commands using the @client.command decorator.
