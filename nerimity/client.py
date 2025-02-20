@@ -7,6 +7,8 @@ from nerimity.server import Server
 from nerimity.roles import Role
 from nerimity.post import Post
 from nerimity.status import Status
+from nerimity.buttoninteraction import ButtonInteraction
+from nerimity.button import Button
 from functools import wraps
 import websockets
 import asyncio
@@ -32,6 +34,7 @@ class Client:
             "on_message_updated": [],
             "on_message_create": [],
             "on_message_deleted": [],
+            "on_button_clicked": [],
             "on_presence_change": [],
             "on_reaction_add": [],
             "on_member_updated": [],
@@ -210,6 +213,37 @@ class Client:
                     
                     for listener in self.event_listeners["on_message_deleted"]:
                         await asyncio.create_task(listener.__call__(json.loads(message_raw.removeprefix("42"))[1]))
+            elif message_raw.startswith("42[\"message:button_clicked"):
+                print("Button clicked")
+                 
+                message = json.loads(message_raw.removeprefix("42"))[1]
+                client_buttons = GlobalClientInformation.BUTTONS
+                _button = None
+                for button in client_buttons:
+                    if button.id == message["buttonId"]:
+                        _button = button
+                        await button.callback()
+                        break
+                button_interaction = ButtonInteraction.deserialize(
+                    {
+                        "messageId": message["messageId"],
+                        "channelId": message["channelId"],
+                        "button": message["button"],
+                        "userId": message["userId"]
+                    }
+                )
+                 # Find the button by ID and execute its callback
+                button_id = message["buttonId"]
+                for server in self.servers.values():
+                    for channel in server.channels.values():
+                        for message in channel.messages:
+                            for button in message.buttons:
+                                if button.id == button_id:
+                                    await button.callback()
+                                    break
+
+                return await self.event_listeners["on_button_clicked"][0].__call__(button_interaction)
+
             elif message_raw.startswith("42[\"message:reaction_added"):
                     
                     for listener in self.event_listeners["on_reaction_add"]:

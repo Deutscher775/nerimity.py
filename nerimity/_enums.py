@@ -3,6 +3,7 @@ import datetime
 class GlobalClientInformation():
     TOKEN = ''
     SERVERS = {}
+    BUTTONS = []
 
 class ConsoleShortcuts():
     def log():   return f"{Colors.MAGENTA}[{datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S.%f')}]{Colors.WHITE} |"
