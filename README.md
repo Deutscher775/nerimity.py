@@ -10,7 +10,7 @@ Guide on how to install nerimity.py.
 - **[Example Bot](#example-commands-bot)** <br>
 An example bot you can directly use.
 - **[Use-case-examples](#use-case-examples)** <br>
-Many varous examples on how to use specific functions.
+Many various examples on how to use specific functions.
 
 
 # Current features
