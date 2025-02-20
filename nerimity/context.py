@@ -4,6 +4,7 @@ from nerimity.member import ServerMember
 from nerimity.message import Message
 from nerimity.server import Server
 from nerimity._enums import GlobalClientInformation
+from nerimity.button import Button
 
 class Context():
     """
@@ -32,9 +33,9 @@ class Context():
                 self.author  = GlobalClientInformation.SERVERS[f"{server.id}"].members[f"{message.author_id}"]
 
     # Public: Sends a message to the channel the command was sent to.
-    async def send(self, response: str, attachment: Attachment | None = None) -> Message:
+    async def send(self, response: str, attachment: Attachment | None = None, buttons: list[Button] = None) -> Message:
         """Sends a message to the channel the command was sent to."""
-        return await self.channel.send_message(response, attachment)
+        return await self.channel.send_message(response, attachment, buttons)
 
     # Public: Removes the original message.
     async def remove(self) -> None:
