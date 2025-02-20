@@ -4,7 +4,6 @@ import json
 from nerimity.message import Message
 from nerimity.attachment import Attachment
 from nerimity._enums import GlobalClientInformation, ConsoleShortcuts
-from nerimity.button import Button
 
 class Channel():
     """
@@ -77,29 +76,16 @@ class Channel():
                             raise aiohttp.ClientResponseError(response.request_info, response.history)
 
     # Public: Sends a message to the channel.
-    async def send_message(self, message_content: str, attachment: Attachment | None = None, buttons: list[Button] | None = None) -> Message:
+    async def send_message(self, message_content: str, attachment: Attachment | None = None) -> Message:
         """Sends a message to the channel."""
         
         api_endpoint = f"https://nerimity.com/api/channels/{self.id}/messages"
         headers = {
             "Authorization": GlobalClientInformation.TOKEN,
-            "Content-Type": "application/json",
         }
         data = {
             "content": message_content,
-            "buttons": []
         }
-
-        if buttons is not None:
-            for button in buttons:
-                data["buttons"].append({
-                    "label": str(button.label),
-                    "id": str(button.id),
-                    "alert": button.alert
-                })
-                GlobalClientInformation.BUTTONS.append(button)
-        print(data["buttons"])
-                
 
         async with aiohttp.ClientSession() as session:
             if attachment is not None:
