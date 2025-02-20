@@ -416,7 +416,7 @@ class Client:
             GlobalClientInformation.SERVERS = self.servers
 
     # Public: Starts the bot. Any code below the start will not be executed.
-    def run(self, debug_mode: bool=False) -> None:
+    def run(self, debug_mode: bool=False, restart_always: bool=False) -> None:
         """Starts the bot. Any code below the start will not be executed."""
     
         async def main():
@@ -490,20 +490,29 @@ class Client:
 
         # Create and run an event loop
         if not debug_mode:
-            last_crash = 0
-            while True:
-                try:
-                    asyncio.get_event_loop().run_until_complete(main())
-                except Exception as e:
-                    print(f"{ConsoleShortcuts.error()} Bot crashed with error: {e}")
-                    traceback.print_exc()
+            if restart_always:
+                print(f"{ConsoleShortcuts.log()} Launching in restart always mode. Bot will restart if it crashes.")
+                while True:
+                    try:
+                        asyncio.get_event_loop().run_until_complete(main())
+                    except Exception as e:
+                        print(f"{ConsoleShortcuts.error()} Bot crashed with error: {e}")
+                        traceback.print_exc()
+            else:
+                last_crash = 0
+                while True:
+                    try:
+                        asyncio.get_event_loop().run_until_complete(main())
+                    except Exception as e:
+                        print(f"{ConsoleShortcuts.error()} Bot crashed with error: {e}")
+                        traceback.print_exc()
+                        
                     
-                
-                if time.time() - last_crash < 60:
-                    print(f"{ConsoleShortcuts.error()} Last crash happened less than a minute ago. Shutting down.")
-                    exit()
-                
-                last_crash = time.time()
+                    if time.time() - last_crash < 60:
+                        print(f"{ConsoleShortcuts.error()} Last crash happened less than a minute ago. Shutting down.")
+                        exit()
+                    
+                    last_crash = time.time()
         else:
             print(f"{ConsoleShortcuts.log()} Launching in debug mode, any uncaught exception will crash the bot.")
             asyncio.get_event_loop().run_until_complete(main())
