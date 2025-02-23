@@ -1,7 +1,8 @@
 # nerimity.py
 
 Python API wrapper for Nerimity originating from [Fiiral](https://github.com/F-iiral), maintained by [Deutscher775](https://github.com/Deutscher775)
-
+### **[Nerimity Server](https://nerimity.com/i/493CV)** <br>
+For questions, help or anything else feel free to join the **[nerimity.py](https://nerimity.com/i/493CV)** Nerimity server.
 # Quick jumps
 - **[Current Features](#current-features)** <br>
 See the features that the framework currently supports.
@@ -11,7 +12,6 @@ Guide on how to install nerimity.py.
 An example bot you can directly use.
 - **[Use-case-examples](#use-case-examples)** <br>
 Many various examples on how to use specific functions.
-
 
 # Current features
 #### Command Handling:
