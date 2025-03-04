@@ -126,7 +126,7 @@ async def ping(ctx: nerimity.Context, params: str):
 
 
 @client.listen("on_ready")
-async def on_ready():
+async def on_ready(params):
     print(f"Logged in as {client.account.username}")
 
 
