@@ -100,8 +100,12 @@ Handle various events such as:
 
 
 # Installation
-Currently there is no direct installation method. (WIP)
-### Follow these 2 simple steps:
+## Option 1: Install via PyPI (recommended)
+```shell
+pip install nerimity
+```
+
+## Option 2: clone this repository
 1. Clone the repository
 ```shell
 git clone https://github.com/deutscher775/nerimity.py.git

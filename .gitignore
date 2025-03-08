@@ -2,3 +2,7 @@ test.py
 test.png
 *.pyc
 .vscode/settings.json
+dist
+build
+nerimity.egg-info/*
+example.py

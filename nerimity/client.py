@@ -253,7 +253,7 @@ class Client:
                         await button.callback(button_interaction)
                         break
                 else:
-                    print(f"{ConsoleShortcuts.warn()} Button with ID {message['buttonId']} not found. Ignoring.")
+                    pass
 
             elif message_raw.startswith("42[\"message:reaction_added"):
                     
@@ -358,7 +358,7 @@ class Client:
             elif message_raw.startswith("42[\"server:left"):
 
                     message = json.loads(message_raw.removeprefix("42"))[1]
-                    del self.servers[message["serverId"]]
+                    del self.servers[message["serverId"]] 
 
                     for listener in self.event_listeners["on_server_left"]:
                         await asyncio.create_task(listener.__call__(json.loads(message_raw.removeprefix("42"))[1]))

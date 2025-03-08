@@ -26,6 +26,7 @@ class Server():
 
     get_ban_list(): Returns a list of banned Members.
     get_server_details(): Updates self with information.
+    get_role(role_id): Returns the role with the specified role ID.
     create_channel(name, type): Creates a new channel for this server.
     create_invite(): Creates an invite for this server.
     create_role(): Creates a new, empty role for this server.
@@ -118,6 +119,10 @@ class Server():
         self.created_at         = server_raw["createdAt"]
         self.verified           = server_raw["verified"]
         self.member_count       = server_raw["memberCount"]
+    
+    def get_role(self, role_id: int) -> Role:
+        """Returns the role with the specified role ID."""
+        return self.roles[str(role_id)]
 
 
     ### Members 
