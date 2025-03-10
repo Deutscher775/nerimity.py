@@ -37,7 +37,7 @@ class Status():
     @staticmethod
     def change_presence(status: StatusType = None, text: str = None) -> None:
         """Changes the status of the user."""
-        api_endpoint = f"https://nerimity.com/api/users/presence"
+        api_endpoint = f"{GlobalClientInformation.API_URL}/users/presence"
         headers = {
             "Authorization": GlobalClientInformation.TOKEN,
             "Content-Type": "application/json",

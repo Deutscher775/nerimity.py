@@ -62,7 +62,7 @@ class Server():
     def get_ban_list(self) -> list[Member]:
         """Returns a list of banned Members."""
 
-        api_endpoint = f"https://nerimity.com/api/servers/{self.id}/bans/"
+        api_endpoint = f"{GlobalClientInformation.API_URL}/servers/{self.id}/bans/"
 
         headers = {
             "Authorization": GlobalClientInformation.TOKEN,
@@ -93,7 +93,7 @@ class Server():
         """Updates self with information."""
 
         invite_code = self.create_invite()
-        api_endpoint = f"https://nerimity.com/api/servers/invites/{invite_code.code}"
+        api_endpoint = f"{GlobalClientInformation.API_URL}/servers/invites/{invite_code.code}"
         
         headers = {
             "Authorization": GlobalClientInformation.TOKEN,
@@ -129,7 +129,7 @@ class Server():
     def update_member(self, user_id: int, role_ids: list[int]=None) -> None:
         """Update a member from this server."""
 
-        api_endpoint = f"https://nerimity.com/api/servers/{self.id}/members/{user_id}/"
+        api_endpoint = f"{GlobalClientInformation.API_URL}/servers/{self.id}/members/{user_id}/"
 
         headers = {
             "Authorization": GlobalClientInformation.TOKEN,
@@ -153,7 +153,7 @@ class Server():
     # Public: Creates a new, empty role for this server.
     def create_role(self) -> 'Role':
         """Creates a new, empty role for this server."""
-        api_endpoint = f"https://nerimity.com/api/servers/{self.id}/roles"
+        api_endpoint = f"{GlobalClientInformation.API_URL}/servers/{self.id}/roles"
 
         headers = {
             "Authorization": GlobalClientInformation.TOKEN,
@@ -170,7 +170,7 @@ class Server():
     def delete_role(self, role_id: int) -> None:
         """Deletes the specified role from this server."""
 
-        api_endpoint = f"https://nerimity.com/api/servers/{self.id}/roles/{role_id}/"
+        api_endpoint = f"{GlobalClientInformation.API_URL}/servers/{self.id}/roles/{role_id}/"
 
         headers = {
             "Authorization": GlobalClientInformation.TOKEN,
@@ -186,7 +186,7 @@ class Server():
     def update_role(self, role_id: int, name: str=None, hex_color: str=None, hide_role: bool=None) -> None:
         """Updates the specified role with new information."""
 
-        api_endpoint = f"https://nerimity.com/api/servers/{self.id}/roles/{role_id}"
+        api_endpoint = f"{GlobalClientInformation.API_URL}/servers/{self.id}/roles/{role_id}"
 
         headers = {
             "Authorization": GlobalClientInformation.TOKEN,
@@ -210,7 +210,7 @@ class Server():
     def create_channel(self, name: str, type: int, permissions: int = None) -> 'Channel':
         """Creates a new channel for this server."""
     
-        api_endpoint = f"https://nerimity.com/api/servers/{self.id}/channels"
+        api_endpoint = f"{GlobalClientInformation.API_URL}/servers/{self.id}/channels"
 
         headers = {
             "Authorization": GlobalClientInformation.TOKEN,
@@ -232,7 +232,7 @@ class Server():
     def delete_channel(self, channel_id: int) -> None:
         """Delete the specified channel from this server."""
 
-        api_endpoint = f"https://nerimity.com/api/servers/{self.id}/channels/{channel_id}/"
+        api_endpoint = f"{GlobalClientInformation.API_URL}/servers/{self.id}/channels/{channel_id}/"
 
         headers = {
             "Authorization": GlobalClientInformation.TOKEN,
@@ -248,7 +248,7 @@ class Server():
     def update_channel(self, channel_id: int, name: str=None, icon: str=None, content: str=None) -> None:
         """Updates the specified channel with new information."""
 
-        api_endpoint = f"https://nerimity.com/api/servers/{self.id}/channels/{channel_id}"
+        api_endpoint = f"{GlobalClientInformation.API_URL}/servers/{self.id}/channels/{channel_id}"
 
         headers = {
             "Authorization": GlobalClientInformation.TOKEN,
@@ -267,7 +267,7 @@ class Server():
             raise requests.RequestException
         
         if (content != None):
-            api_endpoint = f"https://nerimity.com/api/servers/{self.id}/channels/{channel_id}/notice"
+            api_endpoint = f"{GlobalClientInformation.API_URL}/servers/{self.id}/channels/{channel_id}/notice"
 
             if content == "":
                 response = requests.delete(api_endpoint, headers=headers)
@@ -289,7 +289,7 @@ class Server():
         """Creates an invite for this server and returns it. NOT CURRENTLY POSSIBLE."""
         return
 
-        api_endpoint = f"https://nerimity.com/api/servers/{self.id}/invites"
+        api_endpoint = f"{GlobalClientInformation.API_URL}/servers/{self.id}/invites"
 
         headers = {
             "Authorization": GlobalClientInformation.TOKEN,
@@ -318,7 +318,7 @@ class Server():
         """Deletes the specified invite form this server. NOT CURRENTLY POSSIBLE."""
         return
 
-        api_endpoint = f"https://nerimity.com/api/servers/{self.id}/invites/{code}"
+        api_endpoint = f"{GlobalClientInformation.API_URL}/servers/{self.id}/invites/{code}"
 
         headers = {
             "Authorization": GlobalClientInformation.TOKEN,

@@ -39,7 +39,7 @@ class Role():
     def update_role(self, name: str=None, hex_color: str=None, hide_role: bool=None) -> 'Role':
         """Updates itself with the specified information."""
         
-        api_endpoint = f"https://nerimity.com/api/servers/{self.server_id}/roles/{self.id}"
+        api_endpoint = f"{GlobalClientInformation.API_URL}/servers/{self.server_id}/roles/{self.id}"
 
         headers = {
             "Authorization": GlobalClientInformation.TOKEN,
@@ -71,7 +71,7 @@ class Role():
         return Role.deserialize(response_json)
     
     async def set_permissions(self, permission_integer: int) -> 'Role':
-        api_endpoint = f"https://nerimity.com/api/servers/{self.server_id}/roles/{self.id}"
+        api_endpoint = f"{GlobalClientInformation.API_URL}/servers/{self.server_id}/roles/{self.id}"
 
         headers = {
             "Authorization": GlobalClientInformation.TOKEN,

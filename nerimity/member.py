@@ -40,7 +40,7 @@ class Member():
         """Follows the Member. NOT CURRENTLY POSSIBLE."""
         return
 
-        api_endpoint = f"https://nerimity.com/api/users/{self.id}/follow"
+        api_endpoint = f"{GlobalClientInformation.API_URL}/users/{self.id}/follow"
 
         headers = {
             "Authorization": GlobalClientInformation.TOKEN,
@@ -57,7 +57,7 @@ class Member():
         """Unfollows the user. NOT CURRENTLY POSSIBLE."""
         return
 
-        api_endpoint = f"https://nerimity.com/api/users/{self.id}/follow"
+        api_endpoint = f"{GlobalClientInformation.API_URL}/users/{self.id}/follow"
 
         headers = {
             "Authorization": GlobalClientInformation.TOKEN,
@@ -74,7 +74,7 @@ class Member():
         """Sends a friend request to the specified user. NOT CURRENTLY POSSIBLE."""
         return
 
-        api_endpoint = f"https://nerimity.com/api/friends/{self.id}"
+        api_endpoint = f"{GlobalClientInformation.API_URL}/friends/{self.id}"
 
         headers = {
             "Authorization": GlobalClientInformation.TOKEN,
@@ -91,7 +91,7 @@ class Member():
         """Removes the specified user from friends. NOT CURRENTLY POSSIBLE."""
         return
 
-        api_endpoint = f"https://nerimity.com/api/friends/{self.id}"
+        api_endpoint = f"{GlobalClientInformation.API_URL}/friends/{self.id}"
 
         headers = {
             "Authorization": GlobalClientInformation.TOKEN,
@@ -108,7 +108,7 @@ class Member():
         """Sends a direct message to the member. NOT CURRENTLY POSSIBLE."""
         return
 
-        api_endpoint = f"https://nerimity.com/api/channels/{self.id}/messages"
+        api_endpoint = f"{GlobalClientInformation.API_URL}/channels/{self.id}/messages"
 
         headers = {
             "Authorization": GlobalClientInformation.TOKEN,
@@ -164,7 +164,7 @@ class ServerMember(Member):
     def kick(self) -> None:
         """Kicks the user from the server."""
 
-        api_endpoint = f"https://nerimity.com/api/servers/{self.server_id}/members/{self.id}/kick"
+        api_endpoint = f"{GlobalClientInformation.API_URL}/servers/{self.server_id}/members/{self.id}/kick"
 
         headers = {
             "Authorization": GlobalClientInformation.TOKEN,
@@ -181,9 +181,9 @@ class ServerMember(Member):
         """Bans the user from the server, a softban does not remove all messages send in the last 7 hours."""
 
         if soft_ban == True:  
-            api_endpoint = f"https://nerimity.com/api/servers/{self.server_id}/bans/{self.id}?shouldDeleteRecentMessages=false"
+            api_endpoint = f"{GlobalClientInformation.API_URL}/servers/{self.server_id}/bans/{self.id}?shouldDeleteRecentMessages=false"
         else:
-            api_endpoint = f"https://nerimity.com/api/servers/{self.server_id}/bans/{self.id}?shouldDeleteRecentMessages=true"
+            api_endpoint = f"{GlobalClientInformation.API_URL}/servers/{self.server_id}/bans/{self.id}?shouldDeleteRecentMessages=true"
 
         headers = {
             "Authorization": GlobalClientInformation.TOKEN,
@@ -199,7 +199,7 @@ class ServerMember(Member):
     def unban(self) -> None:
         """Unbans the user from the server."""
 
-        api_endpoint = f"https://nerimity.com/api/servers/{self.server_id}/bans/{self.id}"
+        api_endpoint = f"{GlobalClientInformation.API_URL}/servers/{self.server_id}/bans/{self.id}"
 
         headers = {
             "Authorization": GlobalClientInformation.TOKEN,
@@ -253,7 +253,7 @@ class ClientMember(Member):
         """Sets the presence of the bot. NOT CURRENTLY POSSIBLE."""
         return
 
-        api_endpoint = f"https://nerimity.com/api/users/presence"
+        api_endpoint = f"{GlobalClientInformation.API_URL}/users/presence"
 
         headers = {
             "Authorization": GlobalClientInformation.TOKEN,
@@ -276,7 +276,7 @@ class ClientMember(Member):
         """Creates a post and publishes it. NOT CURRENTLY POSSIBLE."""
         return
 
-        api_endpoint = f"https://nerimity.com/api/posts"
+        api_endpoint = f"{GlobalClientInformation.API_URL}/posts"
 
         headers = {
             "Authorization": GlobalClientInformation.TOKEN,
@@ -296,7 +296,7 @@ class ClientMember(Member):
         """Returns the entire feed the bot currently has. NOT CURRENTLY POSSIBLE."""
         return
 
-        api_endpoint = f"https://nerimity.com/api/posts/feed"
+        api_endpoint = f"{GlobalClientInformation.API_URL}/posts/feed"
 
         headers = {
             "Authorization": GlobalClientInformation.TOKEN,

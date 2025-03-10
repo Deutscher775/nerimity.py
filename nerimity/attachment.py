@@ -50,7 +50,7 @@ class Attachment():
             "Authorization": GlobalClientInformation.TOKEN,
             }
         async with aiohttp.ClientSession() as session:
-            async with session.post("https://cdn.nerimity.com/upload", headers=headers, data=formdata) as cdn_response:
+            async with session.post(GlobalClientInformation.CDN_URL, headers=headers, data=formdata) as cdn_response:
                 json = await cdn_response.json()
                 self.file_id = json.get("fileId")
                 return self

@@ -4,11 +4,18 @@ class GlobalClientInformation():
     TOKEN = ''
     SERVERS = {}
     BUTTONS = []
+    API_URL = 'https://nerimity.com/api'
+    CDN_URL = 'https://cdn.nerimity.com'
+    WEBSOCKET_URL = 'wss://nerimity.com'
 
 class ConsoleShortcuts():
+    @staticmethod
     def log():   return f"{Colors.MAGENTA}[{datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S.%f')}]{Colors.WHITE} |"
+    @staticmethod
     def ok():    return f"{Colors.GREEN}[{datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S.%f')}]{Colors.WHITE} |"
+    @staticmethod
     def warn():  return f"{Colors.YELLOW}[{datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S.%f')}]{Colors.WHITE} |"
+    @staticmethod
     def error(): return f"{Colors.RED}[{datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S.%f')}]{Colors.WHITE} |"
 
 class Colors():

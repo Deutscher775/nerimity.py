@@ -71,7 +71,7 @@ class Client:
         - user_id: The ID of the user to get.
         - cache_fallback: Whether to fallback to the cache if the user cannot be be fetched from the API."""
 
-        api_url = f"https://nerimity.com/api/users/{user_id}"
+        api_url = f"{GlobalClientInformation.API_URL}/users/{user_id}"
 
         response = requests.get(api_url, headers={"Authorization": self.token})
         if response.status_code == 200:
@@ -417,14 +417,28 @@ class Client:
     # Public: Starts the bot. Any code below the start will not be executed.
     def run(self, debug_mode: bool=False, restart_always: bool=False) -> None:
         """Starts the bot. Any code below the start will not be executed."""
-    
+        if not GlobalClientInformation.WEBSOCKET_URL:
+            print(f"{ConsoleShortcuts.error()} WEBSOCKET_URL is not set. Please set it to the correct value.")
+            return
+        if not GlobalClientInformation.API_URL:
+            print(f"{ConsoleShortcuts.error()} API_URL is not set. Please set it to the correct value.")
+            return
+        if not GlobalClientInformation.CDN_URL:
+            print(f"{ConsoleShortcuts.error()} CDN_URL is not set. Please set it to the correct value.")
+            return
+        if not GlobalClientInformation.WEBSOCKET_URL == "wss://nerimity.com":
+            print(f"{ConsoleShortcuts.warn()} Custom websocket URL: '{GlobalClientInformation.WEBSOCKET_URL}'. Proceed with caution.")
+        if not GlobalClientInformation.API_URL == "https://nerimity.com/api":
+            print(f"{ConsoleShortcuts.warn()} Custom API URL: '{GlobalClientInformation.API_URL}'. Proceed with caution.")
+        if not GlobalClientInformation.CDN_URL == "https://cdn.nerimity.com":
+            print(f"{ConsoleShortcuts.warn()} Custom CDN URL: '{GlobalClientInformation.CDN_URL}'. Proceed with caution.")
         async def main():
             first_start = True
 
             # Loop this indefinetly
             while True:
                 try:
-                    async with websockets.connect("wss://nerimity.com/socket.io/?EIO=4&transport=websocket") as websocket:
+                    async with websockets.connect(f"{GlobalClientInformation.WEBSOCKET_URL}/socket.io/?EIO=4&transport=websocket") as websocket:
 
                         # We only want to get the data the first time so we dont overwrite on restart
                         if first_start:

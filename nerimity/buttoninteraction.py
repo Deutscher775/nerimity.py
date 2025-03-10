@@ -12,7 +12,7 @@ class ButtonInteraction():
 
     def send_popup(self, title: str, content: str) -> None:
         """Sends a popup to the user who clicked the button."""
-        api_url = f"https://nerimity.com/api/channels/{self.channelId}/messages/{self.messageId}/buttons/{self.button.id}/callback"
+        api_url = f"{GlobalClientInformation.API_URL}/channels/{self.channelId}/messages/{self.messageId}/buttons/{self.button.id}/callback"
 
         headers = {
             "Authorization": GlobalClientInformation.TOKEN

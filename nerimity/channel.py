@@ -43,7 +43,7 @@ class Channel():
     async def update_channel(self, server_id: int, name: str=None, icon: str=None, content: str=None) -> 'Channel':
         """Updates itself with specified information."""
 
-        api_endpoint = f"https://nerimity.com/api/servers/{server_id}/channels/{self.id}"
+        api_endpoint = f"{GlobalClientInformation.API_URL}/servers/{server_id}/channels/{self.id}"
 
         headers = {
             "Authorization": GlobalClientInformation.TOKEN,
@@ -64,7 +64,7 @@ class Channel():
                     raise aiohttp.ClientResponseError(response.request_info, response.history)
 
             if content is not None:
-                api_endpoint = f"https://nerimity.com/api/servers/{server_id}/channels/{self.id}/notice"
+                api_endpoint = f"{GlobalClientInformation.API_URL}/servers/{server_id}/channels/{self.id}/notice"
 
                 if content == "":
                     async with session.delete(api_endpoint, headers=headers) as response:
@@ -83,7 +83,7 @@ class Channel():
     async def send_message(self, message_content: str, attachment: Attachment | None = None, buttons: list[Button] | None = None) -> Message:
         """Sends a message to the channel."""
         
-        api_endpoint = f"https://nerimity.com/api/channels/{self.id}/messages"
+        api_endpoint = f"{GlobalClientInformation.API_URL}/channels/{self.id}/messages"
         headers = {
             "Authorization": GlobalClientInformation.TOKEN,
             "Content-Type": "application/json",
@@ -105,7 +105,7 @@ class Channel():
 
         async with aiohttp.ClientSession() as session:
             if attachment is not None:
-                async with session.post(f"https://cdn.nerimity.com/attachments/{str(self.id)}/{attachment.file_id}") as response:
+                async with session.post(f"{GlobalClientInformation.CDN_URL}/attachments/{str(self.id)}/{attachment.file_id}") as response:
                     if response.status != 200:
                         print(f"{ConsoleShortcuts.error()} Failed to send attachment to {self}. Status code: {response.status}. Response Text: {await response.text()}")
                         raise aiohttp.ClientResponseError(response.request_info, response.history)
@@ -125,7 +125,7 @@ class Channel():
         elif amount < 1:
             raise ValueError("Amount of requested messages must be positive.")
 
-        api_endpoint = f"https://nerimity.com/api/channels/{self.id}/messages?limit={amount}"
+        api_endpoint = f"{GlobalClientInformation.API_URL}/channels/{self.id}/messages?limit={amount}"
 
         headers = {
             "Authorization": GlobalClientInformation.TOKEN,
@@ -178,7 +178,7 @@ class Channel():
         # Returns
         Channel: The channel object.
         """
-        api_url = f"https://nerimity.com/api/servers/{self.server_id}/channels/{self.id}/permissions/{role.id}"
+        api_url = f"{GlobalClientInformation.API_URL}/servers/{self.server_id}/channels/{self.id}/permissions/{role.id}"
         headers = {
             "Authorization": GlobalClientInformation.TOKEN,
             "Content-Type": "application/json",

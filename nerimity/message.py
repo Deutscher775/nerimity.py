@@ -50,7 +50,7 @@ class Message():
     def delete(self) -> None:
         """Deletes this message. Requires ownership of the message or Administration permission in the server."""
 
-        api_endpoint = f"https://nerimity.com/api/channels/{self.channel_id}/messages/{self.id}"
+        api_endpoint = f"{GlobalClientInformation.API_URL}/channels/{self.channel_id}/messages/{self.id}"
 
         headers = {
             "Authorization": GlobalClientInformation.TOKEN,
@@ -66,7 +66,7 @@ class Message():
     def edit(self, edited_content: str):
         """Edits this message to the new message content."""
 
-        api_endpoint = f"https://nerimity.com/api/channels/{self.channel_id}/messages/{self.id}"
+        api_endpoint = f"{GlobalClientInformation.API_URL}/channels/{self.channel_id}/messages/{self.id}"
 
         headers = {
             "Authorization": GlobalClientInformation.TOKEN,
@@ -85,7 +85,7 @@ class Message():
     def react(self, emoji: str):
         """Reacts to the message with the specified emoji."""
 
-        api_endpoint = f"https://nerimity.com/api/channels/{self.channel_id}/messages/{self.id}/reactions"
+        api_endpoint = f"{GlobalClientInformation.API_URL}/channels/{self.channel_id}/messages/{self.id}/reactions"
 
         headers = {
             "Authorization": GlobalClientInformation.TOKEN,
@@ -104,7 +104,7 @@ class Message():
     def unreact(self, emoji: str):
         """Unreacts the message with the specified emoji."""
 
-        api_endpoint = f"https://nerimity.com/api/channels/{self.channel_id}/messages/{self.id}/reactions/remove"
+        api_endpoint = f"{GlobalClientInformation.API_URL}/channels/{self.channel_id}/messages/{self.id}/reactions/remove"
 
         headers = {
             "Authorization": GlobalClientInformation.TOKEN,

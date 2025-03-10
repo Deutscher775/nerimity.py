@@ -6,3 +6,5 @@ dist
 build
 nerimity.egg-info/*
 example.py
+afsf.json
+publish.py

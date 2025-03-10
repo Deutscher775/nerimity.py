@@ -37,7 +37,7 @@ class Post():
     def get_post(post_id: int) -> 'Post':
         """Gets a post by its ID."""
 
-        api_endpoint = f"https://nerimity.com/api/posts/{post_id}"
+        api_endpoint = f"{GlobalClientInformation.API_URL}/posts/{post_id}"
 
         headers = {
             "Authorization": GlobalClientInformation.TOKEN,
@@ -57,7 +57,7 @@ class Post():
     def create_post(content: str) -> 'Post':
         """Creates a new Post and publishes it."""
 
-        api_endpoint = f"https://nerimity.com/api/posts"
+        api_endpoint = f"{GlobalClientInformation.API_URL}/posts"
 
         headers = {
             "Authorization": GlobalClientInformation.TOKEN,
@@ -78,7 +78,7 @@ class Post():
     def delete_post(self) -> None:
         """Deletes this post. Requires ownership over the post. DOES NOT WORK YET."""
 
-        api_endpoint = f"https://nerimity.com/api/posts/{self.id}"
+        api_endpoint = f"{GlobalClientInformation.API_URL}/posts/{self.id}"
 
         headers = {
             "Authorization": GlobalClientInformation.TOKEN,
@@ -94,7 +94,7 @@ class Post():
     def get_comments(self, limit: int = 30) -> list['Post']:
         """Gets the comment as a list of Post. DOES NOT WORK YET."""
 
-        api_endpoint = f"https://nerimity.com/api/posts/{self.id}/comments?limit={limit}"
+        api_endpoint = f"{GlobalClientInformation.API_URL}/posts/{self.id}/comments?limit={limit}"
 
         headers = {
             "Authorization": GlobalClientInformation.TOKEN,
@@ -110,7 +110,7 @@ class Post():
     def like(self) -> None:
         """Likes the post. DOES NOT WORK YET."""
 
-        api_endpoint = f"https://nerimity.com/api/posts/{self.id}/like"
+        api_endpoint = f"{GlobalClientInformation.API_URL}/posts/{self.id}/like"
         self.liked_by.append({"id": self.id})
 
         headers = {
@@ -128,7 +128,7 @@ class Post():
     def unlike(self) -> None:
         """Unlikes the post. DOES NOT WORK YET."""
 
-        api_endpoint = f"https://nerimity.com/api/posts/{self.id}/unlike"
+        api_endpoint = f"{GlobalClientInformation.API_URL}/posts/{self.id}/unlike"
         self.liked_by.remove({"id": self.id})
 
         headers = {
@@ -146,7 +146,7 @@ class Post():
     def create_comment(self, message_content: str) -> None:
         """Creates commant under a post and publishes it. DOES NOT WORK YET."""
 
-        api_endpoint = f"https://nerimity.com/api/posts"
+        api_endpoint = f"{GlobalClientInformation.API_URL}/posts"
 
         headers = {
             "Authorization": GlobalClientInformation.TOKEN,
