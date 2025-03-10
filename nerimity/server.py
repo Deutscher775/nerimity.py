@@ -53,7 +53,6 @@ class Server():
         self.created_at         : float         = None
         self.verified           : bool          = None
         self.member_count       : int           = None
-
         self.channels           : dict[str, Channel] = {}
         self.members            : dict[str, ServerMember]  = {}
         self.roles              : dict[str, Role] = {}
@@ -152,7 +151,7 @@ class Server():
 
     ### Roles
     # Public: Creates a new, empty role for this server.
-    def create_role(self) -> None:
+    def create_role(self) -> 'Role':
         """Creates a new, empty role for this server."""
         api_endpoint = f"https://nerimity.com/api/servers/{self.id}/roles"
 
@@ -165,6 +164,7 @@ class Server():
         if response.status_code != 200:
             print(f"{ConsoleShortcuts.error()} Failed to create a role for {self}. Status code: {response.status_code}. Response Text: {response.text}")
             raise requests.RequestException
+        return Role.deserialize(json.loads(response.content))
 
     # Public: Deletes the specified role from this server.
     def delete_role(self, role_id: int) -> None:
@@ -202,11 +202,12 @@ class Server():
         if response.status_code != 200:
             print(f"{ConsoleShortcuts.error()} Failed to update a role for {self}. Status code: {response.status_code}. Response Text: {response.text}")
             raise requests.RequestException
+        return Role.deserialize(json.loads(response.content))
 
 
     ### Channels
     # Public: Creates a new channel for this server.
-    def create_channel(self, name: str, type: int) -> None:
+    def create_channel(self, name: str, type: int, permissions: int = None) -> 'Channel':
         """Creates a new channel for this server."""
     
         api_endpoint = f"https://nerimity.com/api/servers/{self.id}/channels"
@@ -219,11 +220,13 @@ class Server():
             "name": name,
             "type": type,
         }
+        if permissions != None: data["permissions"] = permissions
 
         response = requests.post(api_endpoint, headers=headers, data=json.dumps(data))
         if response.status_code != 200:
             print(f"{ConsoleShortcuts.error()} Failed to create a channel for {self}. Status code: {response.status_code}. Response Text: {response.text}")
             raise requests.RequestException
+        return Channel.deserialize(json.loads(response.content))
 
     # Public: Delete the specified channel from this server.
     def delete_channel(self, channel_id: int) -> None:
@@ -347,6 +350,7 @@ class Server():
         new_server.created_at         = float(json["createdAt"])
         new_server.verified           = bool(json["verified"])
         new_server.member_count       = None    # why is this not send over, ugh
+        new_server.roles               = {}
 
         new_server.channels           = {}
         new_server.members            = {}

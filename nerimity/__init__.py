@@ -1,4 +1,4 @@
-from nerimity._enums import GlobalClientInformation, Colors, ChannelTypes, PresenceTypes, BadgeTypes, AttachmentTypes
+from nerimity._enums import GlobalClientInformation, Colors, ChannelTypes, PresenceTypes, BadgeTypes, AttachmentTypes, MessageType, Permissions
 from nerimity.attachment import Attachment
 from nerimity.channel import Channel
 from nerimity.client import Client
@@ -12,5 +12,6 @@ from nerimity.post import Post
 from nerimity.status import Status
 from nerimity.button import Button
 from nerimity.buttoninteraction import ButtonInteraction
+
 
 pass

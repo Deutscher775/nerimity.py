@@ -98,6 +98,10 @@ Handle various events such as:
 - Handle button interactions and send popups.
 - Deserialize button interactions from JSON.
 
+#### Permissions:
+- Manage user and role permissions.
+- Check for specific permissions before executing commands.
+- Deserialize permissions from JSON.
 
 # Installation
 ## Option 1: Install via PyPI (recommended)
@@ -136,6 +140,9 @@ async def on_ready(params):
 
 client.run()
 ```
+
+## Issues
+If you encounter any issues while using the framework feel free to open an [Issue](https://github.com/deutscher775/nerimity.py).
 
 ## Use case examples
 ### Sending an attachment
@@ -199,6 +206,52 @@ async def deletepost(ctx: nerimity.Context, params):
     post.delete_post()
     await ctx.send("Deleted post.")
 ```
+
+### Creating a channel
+```py
+@client.command(name="createchannel")
+async def createchannel(ctx: nerimity.Context, params):
+    title = params[0]
+    permissions = nerimity.Permissions.ChannelPermissions.construct(public=True, send_messages=True, join_voice=True)
+    print(permissions)
+    everyone_role = ctx.server.get_role(ctx.server.default_role_id)
+    new_channel = ctx.server.create_channel(title, type=nerimity.ChannelTypes.SERVER_TEXT)
+    await new_channel.set_permissions(permission_integer=permissions, role=everyone_role)
+    await ctx.send(f"Channel '{title}' created.")
+```
+
+### Creating a role
+```py
+@client.command(name="createrole")
+async def createrole(ctx: nerimity.Context, params):
+    name = params[0]
+    hide_role = bool(params[1])
+    role = ctx.server.create_role()
+    role.update_role(name=name, hide_role=hide_role)
+    permissions = nerimity.Permissions.RolePermissions.construct(admin=True, manage_roles=True, send_messages=True)
+    print(permissions)
+    await role.set_permissions(permissions)
+    await ctx.send(f"Role '{name}' created.")
+```
+
+### Setting for a role in a channel
+```py
+@client.command(name="setpermissions")
+async def setpermissions(ctx: nerimity.Context, params):
+    channel_id = int(params[0])
+    role_id = int(params[1])
+    send_messages = bool(params[2])
+    join_voice = bool(params[3])
+    
+    channel = ctx.server.get_channel(channel_id)
+    role = ctx.server.get_role(role_id)
+    
+    permissions = nerimity.Permissions.ChannelPermissions.construct(send_messages=send_messages, join_voice=join_voice)
+    await channel.set_permissions(permission_integer=permissions, role=role)
+    
+    await ctx.send(f"Permissions set for role '{role.name}' in channel '{channel.name}'.")
+```
+
 
 ## Issues
 If you encounter any issues while using the framework feel free to open an [Issue](https://github.com/deutscher775/nerimity.py).

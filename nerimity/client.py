@@ -241,7 +241,6 @@ class Client:
 
                 for button in client_buttons:
                     if button.id == message["buttonId"]:
-                        print(button)
                         button_interaction = ButtonInteraction.deserialize(
                                 {
                                     "messageId": message["messageId"],
@@ -466,9 +465,11 @@ class Client:
                             for role_raw in message_auth["serverRoles"]:
                                 role = Role.deserialize(role_raw)
                                 self.servers[f"{role.server_id}"].roles[f"{role.id}"] = role
+
                             for friend_raw in message_auth["friends"]:
                                 friend = Member.deserialize(friend_raw["recipient"])
                                 self.account.friends[f"{friend.id}"] = friend
+                            
 
                             GlobalClientInformation.SERVERS = self.servers
 

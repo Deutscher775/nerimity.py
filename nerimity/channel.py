@@ -5,6 +5,7 @@ from nerimity.message import Message
 from nerimity.attachment import Attachment
 from nerimity._enums import GlobalClientInformation, ConsoleShortcuts
 from nerimity.button import Button
+from nerimity.roles import Role
 
 class Channel():
     """
@@ -39,7 +40,7 @@ class Channel():
         self.order            : int | None      = None
     
     # Public: Updates itself with specified information.
-    async def update_channel(self, server_id: int, name: str=None, icon: str=None, content: str=None) -> None:
+    async def update_channel(self, server_id: int, name: str=None, icon: str=None, content: str=None) -> 'Channel':
         """Updates itself with specified information."""
 
         api_endpoint = f"https://nerimity.com/api/servers/{server_id}/channels/{self.id}"
@@ -70,11 +71,13 @@ class Channel():
                         if response.status != 200:
                             print(f"{ConsoleShortcuts.error()} Failed to update a channel for {self}. Status code: {response.status}. Response Text: {await response.text()}")
                             raise aiohttp.ClientResponseError(response.request_info, response.history)
+                        return Channel.deserialize(await response.json())
                 else:
                     async with session.put(api_endpoint, headers=headers, json={"content": content}) as response:
                         if response.status != 200:
                             print(f"{ConsoleShortcuts.error()} Failed to update a channel for {self}. Status code: {response.status}. Response Text: {await response.text()}")
                             raise aiohttp.ClientResponseError(response.request_info, response.history)
+                        return Channel.deserialize(await response.json())
 
     # Public: Sends a message to the channel.
     async def send_message(self, message_content: str, attachment: Attachment | None = None, buttons: list[Button] | None = None) -> Message:
@@ -98,7 +101,6 @@ class Channel():
                     "alert": button.alert
                 })
                 GlobalClientInformation.BUTTONS.append(button)
-        print(data["buttons"])
                 
 
         async with aiohttp.ClientSession() as session:
@@ -166,6 +168,35 @@ class Channel():
         messages = messages[:amount]
         for message in messages:
             await message.delete()
+    
+    # Public: Set the permissions of the channel.
+    async def set_permissions(self, permission_integer: int, role: Role) -> 'Channel':
+        """
+        Sets the permissions of the channel.
+        # Attributes
+        integer: int - The permission integer. Can be constructed using Permissions.ChannelPermissions.construct()
+        # Returns
+        Channel: The channel object.
+        """
+        api_url = f"https://nerimity.com/api/servers/{self.server_id}/channels/{self.id}/permissions/{role.id}"
+        headers = {
+            "Authorization": GlobalClientInformation.TOKEN,
+            "Content-Type": "application/json",
+        }
+        data = {
+            "permissions": permission_integer,
+        }
+
+        async with aiohttp.ClientSession() as session:
+            async with session.post(api_url, headers=headers, json=data) as response:
+                if response.status != 200:
+                    print(f"{ConsoleShortcuts.error()} Failed to set permissions for {self}. Status code: {response.status}. Response Text: {await response.text()}")
+                    raise aiohttp.ClientResponseError(response.request_info, response.history)
+                return Channel.deserialize(await response.json())
+        
+
+
+
 
     # Public Static: Deserialize a json string to a Channel object.
     @staticmethod
