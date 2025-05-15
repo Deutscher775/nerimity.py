@@ -9,6 +9,7 @@ from nerimity.post import Post
 from nerimity.status import Status
 from nerimity.buttoninteraction import ButtonInteraction
 from nerimity.button import Button
+from nerimity.slashcommand import SlashCommand
 from functools import wraps
 import websockets
 import asyncio
@@ -29,6 +30,7 @@ class Client:
         self.token: str = token
         self.prefix: str = prefix
         self.commands: dict[str, Callable] = {}
+        self.slash_commands: dict[SlashCommand, Callable] = {}
         self.event_listeners = {
             "on_ready": [],
             "on_message_updated": [],
@@ -75,7 +77,8 @@ class Client:
 
         response = requests.get(api_url, headers={"Authorization": self.token})
         if response.status_code == 200:
-            return Member.deserialize(response.json())
+            print(response.json())
+            return Member.deserialize(response.json()["user"])
         elif cache_fallback:
             for server in GlobalClientInformation.SERVERS.values():
                 if str(user_id) in server.members.keys():
@@ -107,7 +110,7 @@ class Client:
                     # Handle None result explicitly
                     return None
                 return result
-
+            
             wrapped_func = async_wrapper if asyncio.iscoroutinefunction(func) else func
             self.commands[command_name] = wrapped_func
 
@@ -119,6 +122,43 @@ class Client:
 
             return wrapped_func
 
+        return decorator
+
+    def slash_command(self, name: str = None, *, description: str):
+        """Decorator to register a slash command."""
+
+        def decorator(func: Callable):
+            command_name = name if name is not None else func.__name__
+
+            @functools.wraps(func)
+            async def async_wrapper(ctx, *args, **kwargs):
+                if not isinstance(ctx, Context):
+                    raise TypeError(f"Error: Expected nerimity.Context, got {type(ctx)}")
+
+                # Call function
+                result = func(ctx, *args, **kwargs)
+
+                # Ensure we only await if result is a coroutine
+                if asyncio.iscoroutine(result):
+                    awaited_result = await result
+                    return awaited_result if awaited_result is not None else None  # Prevent returning NoneType for awaiting
+                elif result is None:
+                    # Handle None result explicitly
+                    return None
+                return result
+
+            wrapped_func = async_wrapper if asyncio.iscoroutinefunction(func) else func
+            slashcommand = SlashCommand(name=command_name, description=description)
+            self.slash_commands[slashcommand] = wrapped_func
+            args = ""
+            import inspect # Lazy import :pensive:
+            signature = inspect.signature(wrapped_func)
+            for arg in signature.parameters:
+                if arg not in ["ctx", "self"]:
+                    args += f"<{arg}> "
+            slashcommand.args = args.strip()
+            return wrapped_func
+        
         return decorator
 
 
@@ -181,32 +221,32 @@ class Client:
     
     # Private: Processes Commands and execute them if they exist.
     async def _process_commands(self, message: Message) -> None:
+        self._process_slash_commands(message)
         if not message.content.startswith(self.prefix):
             return
+
 
         command = message.content.removeprefix(self.prefix).split(' ')[0]
         if command in self.commands:
             ctx = Context(message)
 
+            arguments = message.content.split(' ')[1:]
+            asyncio.create_task(self.commands[command].__call__(ctx, *arguments))
+    
+    def _process_slash_commands(self, message: Message) -> None:
+        if not message.content.startswith("/") or ":" not in message.content: # there may be a better way to do this, but it works ¯\_(ツ)_/¯
+            return
+        
+        print(f"{ConsoleShortcuts.log()} Slash command detected: {message.content}")
+        
+        command = message.content.split(":")[0].removeprefix("/")
+        if command in [_command.name for _command in self.slash_commands.keys()]:
+            ctx = Context(message)
 
             arguments = message.content.split(' ')[1:]
-            parsed_arguments = []
-            i = 0
-            while i < len(arguments):
-                if arguments[i].startswith('"'):
-                    combined_arg = arguments[i][1:]  # Remove the leading double quote
-                    i += 1
-                    while i < len(arguments) and not arguments[i].endswith('"'):
-                        combined_arg += ' ' + arguments[i]
-                        i += 1
-                    if i < len(arguments):
-                        combined_arg += ' ' + arguments[i][:-1]  # Remove the trailing double quote
-                    parsed_arguments.append(combined_arg)
-                else:
-                    parsed_arguments.append(arguments[i])
-                i += 1
-        
-            asyncio.create_task(self.commands[command].__call__(ctx, parsed_arguments))
+            command = [key for key, value in self.slash_commands.items() if value.__name__ == command][0]
+            asyncio.create_task(self.slash_commands[command].__call__(ctx, *arguments))
+         
 
     # Private: Listens to the webhook and calls commands/listeners.
     async def _listen_webhook(self, websocket: 'websockets.legacy.client.WebSocketClientProtocol') -> None:
@@ -490,6 +530,10 @@ class Client:
                             # on_ready
                             for listener in self.event_listeners["on_ready"]:
                                 await asyncio.create_task(listener.__call__(message_auth))
+                                if self.slash_commands != {}:
+                                    print(f"{ConsoleShortcuts.log()} Registering slash commands.")
+                                    SlashCommand.register(self.slash_commands)
+                                     
 
                             # on_hour_pulse & on_minute_pulse
                             if self.event_listeners["on_minute_pulse"] != {}: asyncio.create_task(self._minute_pulse())
