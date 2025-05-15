@@ -8,6 +8,8 @@ For questions, help or anything else feel free to join the **[nerimity.py](https
 See the features that the framework currently supports.
 - **[Installation](#installation)** <br>
 Guide on how to install nerimity.py.
+- **[Notice: Prefix Command and Slash Commands](#notice-prefix-commands-and-slash-command)**<br>
+Description of what prefix and slash commands are and what differneces there are between them.
 - **[Example Bot](#example-commands-bot)** <br>
 An example bot you can directly use.
 - **[Use-case-examples](#use-case-examples)** <br>
@@ -118,6 +120,16 @@ git clone https://github.com/deutscher775/nerimity.py.git
 ![Image](./readme-assets/directory-view.png)
 
 ### Done!
+
+## Notice: Prefix commands and Slash Command
+A prefixed command is a command that uses the set prefix in the bot's code. Bots will not react if the message does not start with the prefix.
+
+Slash commands are registered to Nerimity directly and can be shown by typing `/` into the message bar. Registered slash commands will show up there with arguments that need to be provided, if the command needs them.<br>
+**Newly** registered slash commands will **only show up after reloading the app**
+
+Except the above stated things there are no differences between prefix and slash command.
+
+
 ## Example commands bot
 ```py
 import nerimity
@@ -128,10 +140,15 @@ client = nerimity.Client(
     prefix='!',
 )
 
+# Prefix command -> !ping
 @client.command(name="ping")
 async def ping(ctx: nerimity.Context, params: str):
     await ctx.send("Pong!")
 
+# Slash command -> /test
+@client.slash_command(name="test", description="A test slash command")
+async def test(ctx: nerimity.Context):
+    await ctx.send("Test successful")
 
 @client.listen("on_ready")
 async def on_ready(params):
