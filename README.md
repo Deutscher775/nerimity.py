@@ -165,7 +165,7 @@ If you encounter any issues while using the framework feel free to open an [Issu
 ### Sending an attachment
 ```py
 @client.command(name="testattachment")
-async def testattachment(ctx: nerimity.Context, params):
+async def testattachment(ctx: nerimity.Context):
     file = await nerimity.Attachment.construct("test.png").upload()
     result = await ctx.send("Test", attachment=file)
 ```
@@ -173,7 +173,7 @@ async def testattachment(ctx: nerimity.Context, params):
 ### Sending buttons with messages
 ```py
 @client.command(name="testbutton")
-async def testbutton(ctx: nerimity.Context, params):
+async def testbutton(ctx: nerimity.Context):
     popup_button = nerimity.Button.construct(label="Popup!", id="popuptestbutton", alert=True)
     async def popup_callback(buttoninteraction: nerimity.ButtonInteraction):
         user = client.get_user(buttoninteraction.userId)
