@@ -142,7 +142,7 @@ client = nerimity.Client(
 
 # Prefix command -> !ping
 @client.command(name="ping")
-async def ping(ctx: nerimity.Context, params: str):
+async def ping(ctx: nerimity.Context):
     await ctx.send("Pong!")
 
 # Slash command -> /test
