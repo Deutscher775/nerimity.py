@@ -19,7 +19,8 @@ Many various examples on how to use specific functions.
 #### Command Handling:
 - Define and register commands using the @client.command decorator.
 - Execute commands with parameters.
-Register event listeners using the @client.listen decorator.
+
+### Register event listeners using the @client.listen decorator.
 Handle various events such as:
 - on_ready
 - on_message_create
